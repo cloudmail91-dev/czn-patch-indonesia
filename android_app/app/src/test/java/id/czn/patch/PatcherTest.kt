@@ -34,8 +34,11 @@ class PatcherTest {
         val p = Patcher(res!!, ::println)
         p.apply(data!!)
         p.restore()
-        for (n in listOf(Patcher.MANIFEST, Patcher.ETAG))
-            assertEquals(true, File(res, n).readBytes().contentEquals(File(res, "${Patcher.BACKUP}/$n").readBytes()))
+        assertEquals(true, File(res, Patcher.MANIFEST).readBytes().contentEquals(File(res, "${Patcher.BACKUP}/${Patcher.MANIFEST}").readBytes()))
+        // restore rewrites the etag with LF + trailing newline, whatever the backup used
+        val etag = File(res, Patcher.ETAG).readText()
+        assertEquals(File(res, "${Patcher.BACKUP}/${Patcher.ETAG}").readText().replace("\r\n", "\n").trimEnd('\n') + "\n", etag)
+        assertEquals(false, '\r' in etag)
         assertEquals(false, p.looksPatched(data))
         p.apply(data)                           // second apply starts from the backup again
         assertEquals(true, p.looksPatched(data))

@@ -36,6 +36,9 @@ class Patcher(private val res: File, private val log: (String) -> Unit) {
                 "kemungkinan sudah asli; kalau masih bermasalah, hapus data game supaya diunduh ulang."
         }
         for (f in backup.listFiles()!!) { f.copyTo(place(f.name), overwrite = true); log("  kembalikan ${f.name}") }
+        val e = File(res, ETAG)
+        if (e.exists()) e.writeBytes((e.readText(Charsets.ISO_8859_1)
+            .replace("\r\n", "\n").trimEnd('\n') + "\n").toByteArray(Charsets.ISO_8859_1))
     }
 
     /** True when the UI table already holds translated text (more than 30% of rows are cache values). */
@@ -117,14 +120,18 @@ class Patcher(private val res: File, private val log: (String) -> Unit) {
             log("Cerita: $total baris diterjemahkan")
         }
 
-        val raw = File(backup, ETAG).readText(Charsets.ISO_8859_1)
-        val nl = if ("\r\n" in raw) "\r\n" else "\n"
-        val etag = raw.split(nl).toMutableList()
+        // The Android client writes this file with LF and a trailing newline. A CRLF copy (the PC
+        // launcher's style) makes the client distrust the local manifest, fetch the server manifest and
+        // re-download the patched chunks - the text goes back to English. Always normalise to LF.
+        val nl = "\n"
+        val etag = File(backup, ETAG).readText(Charsets.ISO_8859_1).replace("\r\n", nl)
+            .trimEnd('\n').split(nl).toMutableList()
+        check(etag.size >= 4) { "manifest.ssra.etag tidak seperti biasanya" }
         etag[2] = java.lang.Long.toUnsignedString(Xxh64.hash(m)); etag[3] = m.size.toString()
 
         // everything is computed; now swap the files in (originals stay in the backup)
         moveIn(chunk); if (storyFile.exists()) moveIn(storyTail)
-        writeIn(MANIFEST, m); writeIn(ETAG, etag.joinToString(nl).toByteArray(Charsets.ISO_8859_1))
+        writeIn(MANIFEST, m); writeIn(ETAG, (etag.joinToString(nl) + nl).toByteArray(Charsets.ISO_8859_1))
         log("UI: ${tr.size} entri diterjemahkan")
     }
 
