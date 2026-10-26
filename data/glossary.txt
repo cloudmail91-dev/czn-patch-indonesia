@@ -1,0 +1,53 @@
+# Format: English = Indonesian. "= (keep)" means keep the English word as is.
+# Edit freely; translate.py sends this list with every request. Delete cache.json entries to retranslate.
+
+## Combat keywords: keep English everywhere (they also appear as $Keyword$ tokens the game looks up)
+Shield, Draw, Draw Pile, Discard, Discard Pile, Graveyard, Exhaust, Heal, Fixed Heal, Counterattack, Vulnerable, Agony, Fracture, Weaken, Impair, Morale, Resolve, Fortitude, Extra Attack, Coordinated Attack, Fixed Damage, Fixed Shield, Defense-Based Damage, Tenacity Damage, Damage Reduction, AP, DoT, Retain, Haste, Reload, Bullet, Mark, Linked, Scorched, Ravage, Voracity, Quietus, Resonance, Creation, Epiphany, Proc, Activate, Basic Card, Rhythm card = (keep)
+
+## Proper nouns: keep English
+Chaos, Chaos Order, Nightmare, SS Nightmare, Invader, Void, Protos, Dark Star, Ark, Ark City, Lumen, Luminus, Tenebria, Nihilum, Edenity, Terrascion, Aether, Messiah, Empire, Distortion, Nebula Distortion, Galactic Disaster, Prism Module, Memory Fragment, Memory Code, Trauma Code, Save Data, Codex, Upon Fate, all character names = (keep)
+
+## Fixed translations
+Combatant / Combatants = Combatant (keep, do not translate as pejuang/petarung)
+Partner = Partner
+Agent = Agen
+Captain = Kapten
+Attack Card = Kartu Attack
+Skill Card = Kartu Skill
+Card = Kartu
+Damage = Damage
+Damage Amount = Jumlah Damage
+Health = HP
+Attack = Attack (stat) / serangan (normal sentence)
+Defense = Defense
+Critical Chance = Crit Rate
+Critical Damage = Crit Damage
+Cost = Cost
+Credits = Kredit
+Crystal / Crystals = Kristal
+Rescue (gacha) = Rescue
+Relic = Relik
+Inventory = Inventaris
+Stress = Stres
+Mission / Missions = Misi
+Story = Kisah
+Chapter = Bab
+Episode = Episode
+Stage = Stage
+Clear = Clear
+Level Up = Naik Level
+Lv = Lv
+Unidentified Area = Area Tak Teridentifikasi
+Event Encounter = Event Encounter
+Simulation = Simulasi
+Shop = Toko
+Friends = Teman
+Mail = Kotak Surat
+Confirm = Konfirmasi
+Cancel = Batalkan
+Back = Kembali
+Tap = Ketuk
+
+## Tone
+UI and system text: polite, short, use "Kamu".
+Character dialogue: natural casual Indonesian that fits the speaker (aku/kamu, gue/lo only if the English is very slangy). Keep interjections (Hehe, Ugh, Hmm) as they are.
