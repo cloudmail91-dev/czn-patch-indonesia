@@ -1,126 +1,120 @@
-# Chaos Zero Nightmare – Patch Bahasa Indonesia (PC & Android)
+# Chaos Zero Nightmare – Patch Bahasa Indonesia
 
-Patch terjemahan Indonesia untuk Chaos Zero Nightmare versi PC **dan Android**.
-Mengganti teks bahasa Inggris dengan bahasa Indonesia: UI/menu dan dialog cerita.
+Patch yang mengubah teks game Chaos Zero Nightmare (menu, UI, dan dialog cerita) dari bahasa Inggris ke
+bahasa Indonesia. Bisa dipakai di **PC** dan **Android**.
 
-> Fan project, tidak berafiliasi dengan Smilegate/Stove. Terjemahan dibuat dengan model AI (Claude Haiku) dan
-> belum dikoreksi manusia, jadi masih ada kalimat yang kaku atau salah. Koreksi sangat diterima.
+> Fan project, tidak berafiliasi dengan Smilegate/Stove. Terjemahan dibuat dengan AI dan belum dikoreksi
+> manusia, jadi masih ada kalimat yang kaku atau salah.
 
-## Peringatan
+## Sebelum mulai
 
-- **Risiko akun.** Game ini punya anti-cheat. Patch ini hanya mengubah berkas resource game
-  (tidak menyentuh anti-cheat, tidak memakai injeksi/hook), tapi tetap memodifikasi berkas game.
-  Pakai dengan risiko sendiri. Penulis tidak bertanggung jawab atas banned atau kerusakan.
-- **Hanya versi PC dan Android, patch resource 1.0.84102.** Setelah game update, patch bisa berhenti bekerja atau tertimpa.
-- **Android didukung** lewat kabel USB (atau wireless debugging) dan `adb` yang sudah disertakan. Tidak perlu root.
-  Permintaan pertamanya: aktifkan Opsi Pengembang > USB debugging di HP. Setelah game update, jalankan menu Android lagi.
-- Teks yang tidak ada di tabel terjemahan tetap bahasa Inggris (termasuk layar "TAP TO START").
+- **Pakai dengan risiko sendiri.** Patch ini hanya mengganti berkas teks game (tidak menyentuh anti-cheat),
+  tapi tetap memodifikasi berkas game. Pembuat patch tidak bertanggung jawab atas banned atau kerusakan.
+- **Versi game yang didukung: 1.0.84102.** Kalau game sudah update ke versi lain, lihat
+  [Setelah game update](#setelah-game-update).
+- Sebagian kecil teks memang tetap bahasa Inggris (misalnya layar "TAP TO START").
 
-## Isi
+## Unduh
 
-```
-CZN_Patch.exe        alat patch: pasang / kembalikan (PC dan Android)
-CZN_Editor.exe       editor terjemahan (tab UI dan Story) + tombol Apply ke game
-CZN_Patch_Android.apk aplikasi Android: pasang / kembalikan langsung di HP lewat Shizuku (tanpa PC)
-update.bat           unduh versi terbaru dari GitHub
-platform-tools/      adb (Google) untuk mode Android
-data/
-  cache.dat          terjemahan {Inggris: Indonesia} (terkompresi dan diacak)
-  sets.dat           daftar teks UI dan Story untuk editor
-  story_files.json   lokasi berkas cerita di resource game
-  version.json       versi game dan lokasi tabel teks (dibuat oleh scan.py)
-  glossary.txt       istilah yang dipertahankan/ditetapkan
-src/                 kode Python dari kedua exe, plus scan.py dan android.py
-android_app/         kode sumber APK (Kotlin); build: android_app\gradlew assembleRelease
-```
+Buka halaman [Releases](https://github.com/cloudmail91-dev/czn-patch-indonesia/releases/latest) lalu unduh:
 
-Tidak ada berkas game yang disertakan. Alat ini membaca berkas milik kamu sendiri — di PC maupun di HP.
+| Kamu main di | Unduh |
+|---|---|
+| PC | `CZN_Patch_PC.zip` |
+| Android, tanpa PC | `CZN_Patch_Android.apk` |
+| Android, lewat PC + kabel USB | `CZN_Patch_PC.zip` |
 
-## Cara pakai
+Untuk PC, ekstrak zip ke folder mana saja. Jangan pindahkan `CZN_Patch.exe` keluar dari folder itu
+(exe harus tetap di sebelah folder `data`).
 
-Biarkan susunan folder seperti di atas (exe harus berada di sebelah folder `data`).
-`cache.dat` dan `sets.dat` sudah ada di dalam exe, jadi boleh tidak ada di `data/`. Kalau ada, berkas di `data/`
-yang dipakai (misalnya hasil simpan editor).
+---
 
-1. Tutup game dan launcher. Pastikan game versi 1.0.83709 dan berkasnya utuh
-   (verifikasi berkas lewat launcher kalau perlu).
-2. Klik dua kali `CZN_Patch.exe`, ketik `1`, lalu pilih folder game (yang berisi `bin`).
-   Berkas asli dicadangkan otomatis ke `...\gameres\czn_id_backup`.
-   Lewat terminal: `CZN_Patch.exe apply "D:\Games\ChaosZeroNightmare"`.
-3. Buka game.
+## PC
 
-### Mengembalikan ke asli
+### Pasang
 
-Klik dua kali `CZN_Patch.exe` lalu ketik `2`, atau lewat terminal:
-`CZN_Patch.exe restore "D:\Games\ChaosZeroNightmare"`.
+1. Tutup game dan launcher.
+2. Klik dua kali `CZN_Patch.exe`, ketik `1`, lalu pilih folder game (folder yang berisi `bin`).
+3. Tunggu sampai selesai, lalu buka game.
 
-## Android tanpa PC (APK + Shizuku)
+Berkas asli otomatis dicadangkan, jadi bisa dikembalikan kapan saja.
 
-1. Pasang [Shizuku](https://github.com/RikkaApps/Shizuku/releases) (juga ada di Play Store) dan nyalakan lewat
-   Wireless debugging (atau root). Panduan lengkapnya ada di dalam aplikasi (tombol **Panduan pemakaian**).
-2. Pasang `CZN_Patch_Android.apk`, buka, tekan **Pasang terjemahan**, lalu izinkan di dialog Shizuku.
-3. Setelah game update, tekan **Pasang terjemahan** lagi. Kalau data di APK tidak cocok dengan versi game, aplikasi
-   otomatis mengunduh `data/version.json`, `data/story_files.json`, dan `data/cache.dat` dari branch `main` repo GitHub
-   (sama dengan `update.bat`). Jadi cukup push data baru ke GitHub, APK tidak perlu di-build ulang.
+### Kembalikan ke bahasa Inggris
 
-Cadangan asli disimpan di HP (`gameres/czn_id_backup`), sama seperti alat PC, jadi kedua cara bisa dipakai bergantian.
+Klik dua kali `CZN_Patch.exe`, ketik `2`, lalu pilih folder game yang sama.
 
-## Android (lewat kabel USB atau wireless debugging)
+---
 
-1. Di HP: Pengaturan > Tentang ponsel > ketuk "Nomor bentukan" 7x untuk membuka Opsi Pengembang,
-   lalu aktifkan **USB debugging** (kalau tanpa kabel: aktifkan juga **Wireless debugging** dan pairing).
-2. Sambungkan kabel ke komputer, lalu terima dialog "Allow USB debugging" di layar HP.
-3. Klik dua kali `CZN_Patch.exe` dan pilih **3** (pasang patch ke HP). Alat ini akan:
-   membaca versi game di HP → menyalin berkas yang perlu → menerjemahkan di komputer →
-   mengirim balik → memeriksa ulang setiap berkas.
-   Cadangan asli otomatis disimpan di HP (`gameres\czn_id_backup`) dan di komputer (`android_backup\<versi>`).
-4. Buka game. Kalau teksnya masih Inggris, jalankan **5** (cek status) lalu kirim hasilnya saat lapor masalah.
+## Android tanpa PC (APK)
 
-Lewat terminal:
+Butuh aplikasi [Shizuku](https://github.com/RikkaApps/Shizuku/releases) (juga ada di Play Store). Tidak perlu root.
 
-```
-CZN_Patch.exe android           pasang patch ke HP
-CZN_Patch.exe android-restore   kembalikan HP ke bahasa Inggris
-CZN_Patch.exe android-check     tampilkan versi game di HP dan keadaan berkas
-```
+1. Mainkan game minimal sekali sampai unduhan data selesai, lalu tutup game.
+2. Pasang dan nyalakan Shizuku lewat **Wireless debugging**. Kalau bingung, buka aplikasi patch lalu tekan
+   **Panduan pemakaian**, di sana ada langkah lengkapnya.
+3. Pasang `CZN_Patch_Android.apk`, buka, tekan **Pasang terjemahan**, lalu izinkan di dialog Shizuku.
+4. Buka game.
 
-Catatan: game harus sudah pernah dijalankan minimal sekali di HP (berkasnya diunduh saat pertama main),
-dan HP harus versi game yang sama dengan `data\version.json` — kalau tidak sama, alat akan menolak dan
-menyuruh kamu menjalankan `update.bat`.
+Untuk mengembalikan ke bahasa Inggris, tekan **Kembalikan ke bahasa Inggris** di aplikasi.
 
-### Dengan Python (tanpa exe)
+## Android lewat PC (kabel USB)
 
-```
-pip install -r src/requirements.txt
-python src/patch.py apply "D:\Games\ChaosZeroNightmare"
-python src/editor.py
-```
+1. Mainkan game minimal sekali di HP sampai unduhan data selesai, lalu tutup game.
+2. Di HP: Pengaturan > Tentang ponsel > ketuk **Nomor bentukan** 7 kali untuk membuka Opsi Pengembang,
+   lalu aktifkan **USB debugging**.
+3. Sambungkan HP ke PC dengan kabel, lalu tekan **Izinkan** pada dialog "Allow USB debugging" di HP.
+4. Klik dua kali `CZN_Patch.exe`, ketik `3`, lalu tunggu sampai selesai.
+5. Buka game di HP.
+
+Menu lain di `CZN_Patch.exe` untuk Android:
+- `4` – kembalikan HP ke bahasa Inggris
+- `5` – cek status (versi game dan keadaan berkas). Sertakan hasilnya kalau melaporkan masalah.
+
+---
 
 ## Setelah game update
 
-1. Verifikasi berkas lewat launcher, lalu hapus folder `czn_id_backup` di `...\gameres` (PC) dan
-   `...\Android\data\...\files\gameres\czn_id_backup` (Android).
-2. Jalankan `update.bat`. Kalau versi baru sudah didukung, `data/version.json` ikut diperbarui; lalu pasang lagi
-   (PC maupun HP).
-3. Kalau belum didukung, `CZN_Patch.exe` menolak dengan pesan "Versi game tidak cocok". Pengelola memperbaruinya dengan
-   `python src/scan.py "<folder game>"`, lalu menerjemahkan teks baru.
+Setelah game update, terjemahan biasanya hilang atau patch menolak dengan pesan **"Versi game tidak cocok"**.
 
-## Berkontribusi
+- **PC / Android lewat PC:** jalankan `update.bat` untuk mengunduh patch dan terjemahan terbaru, lalu pasang lagi.
+- **APK:** tekan **Pasang terjemahan** lagi. Aplikasi otomatis mengambil data terbaru.
 
-Perbaiki terjemahan dengan `CZN_Editor.exe`. Ada tab **UI** dan **Story**, tabel Inggris/Indonesia yang bisa dicari
-(Inggris, Indonesia, atau keduanya), klik sel Indonesia untuk mengubah (Enter = terapkan, Shift+Enter = baris baru,
-Esc = batal), lalu **Ctrl+S** untuk menyimpan ke `data/cache.dat`. Baris dengan tag yang berbeda dari aslinya diberi warna merah.
-Tombol **Apply ke game** menyimpan lalu langsung memasang terjemahan ke game.
-Pertahankan tag/placeholder persis seperti aslinya: `<br>`, `<cc>..</>`, `{0}`, `$Istilah$`, `#nama#`, `[fc]..[/]`, dan `|`.
-Tag yang berubah bisa merusak tampilan atau membuat game error.
+Kalau masih "Versi game tidak cocok", berarti patch untuk versi game terbaru belum tersedia. Tunggu rilis berikutnya.
+
+## Masalah umum
+
+- **Teks masih bahasa Inggris.** Pastikan game benar-benar tertutup saat memasang, lalu pasang ulang.
+  Di Android lewat PC, jalankan cek status (`5`) untuk melihat berkas mana yang belum terpasang.
+- **Game error atau minta unduh ulang data.** Kembalikan ke bahasa Inggris (di PC bisa juga verifikasi berkas
+  lewat launcher), jalankan `update.bat`, lalu pasang lagi.
+- **HP tidak terdeteksi di PC.** Cabut lalu pasang lagi kabelnya, pastikan USB debugging aktif dan dialog izin
+  sudah diterima. Coba kabel lain kalau perlu (sebagian kabel hanya untuk mengisi daya).
+
+Laporkan masalah lewat [Issues](https://github.com/cloudmail91-dev/czn-patch-indonesia/issues).
+
+## Ikut memperbaiki terjemahan
+
+Ada terjemahan yang salah? Buka `CZN_Editor.exe` (ada di dalam `CZN_Patch_PC.zip`):
+
+1. Pilih tab **UI** atau **Story**, lalu cari teksnya (bisa cari kata Inggris atau Indonesia).
+2. Klik sel bahasa Indonesia untuk mengubahnya (Enter = terapkan, Shift+Enter = baris baru, Esc = batal).
+3. Tekan **Ctrl+S** untuk menyimpan, atau **Apply ke game** untuk menyimpan sekaligus memasangnya ke game.
+
+Jangan ubah kode khusus di dalam teks, seperti `<br>`, `<cc>..</>`, `{0}`, `$Istilah$`, `#nama#`, `[fc]..[/]`,
+dan `|`. Kode yang berubah bisa merusak tampilan atau membuat game error (baris seperti ini ditandai merah).
+
+Kirim perbaikanmu lewat Issues atau Pull Request di GitHub.
 
 ---
 
 ## English
 
-Unofficial fan Indonesian translation patch for **Chaos Zero Nightmare (PC, resource patch 1.0.83709)**.
-`CZN_Patch.exe apply "<game folder>"` rewrites the English UI and story text tables with the Indonesian ones in
-`cache.dat`, backs up the originals, and fixes the manifest hash chain. `restore` undoes it. It only modifies resource
-files (no anti-cheat bypass), but modifying game files may still risk your account. Use at your own risk. No game files
-are included. Android is not supported (the game re-downloads modified files).
-Translations are machine-generated (Claude Haiku 5.5) and unreviewed.
+Unofficial Indonesian translation patch for **Chaos Zero Nightmare** (PC and Android, game version 1.0.84102).
+Machine-translated and unreviewed. Modifies game resource files only (no anti-cheat bypass), but use at your own risk.
+
+- **PC:** extract `CZN_Patch_PC.zip`, run `CZN_Patch.exe`, choose `1`, select the game folder (the one containing `bin`).
+  Choose `2` to restore.
+- **Android (no PC):** install `CZN_Patch_Android.apk` with [Shizuku](https://github.com/RikkaApps/Shizuku/releases)
+  running, then tap **Pasang terjemahan**.
+- **Android (via PC):** enable USB debugging, connect the phone, run `CZN_Patch.exe` and choose `3`.
+- **After a game update:** run `update.bat` (or tap **Pasang terjemahan** again in the APK), then patch again.
