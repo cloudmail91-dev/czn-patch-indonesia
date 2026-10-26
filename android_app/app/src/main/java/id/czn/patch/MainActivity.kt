@@ -2,12 +2,9 @@ package id.czn.patch
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.ComponentName
-import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.graphics.Typeface
 import android.os.Bundle
-import android.os.IBinder
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
@@ -18,8 +15,6 @@ import rikka.shizuku.Shizuku
 import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
 class MainActivity : Activity() {
@@ -29,19 +24,6 @@ class MainActivity : Activity() {
     private val buttons = ArrayList<Button>()
     private var busy = false
 
-    @Volatile private var svc: IPatchService? = null
-    private var connected = CountDownLatch(1)
-    private val conn = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
-            svc = IPatchService.Stub.asInterface(binder); connected.countDown()
-        }
-        override fun onServiceDisconnected(name: ComponentName?) { svc = null }
-    }
-    private val args by lazy {
-        Shizuku.UserServiceArgs(ComponentName(packageName, PatchService::class.java.name))
-            .daemon(false).processNameSuffix("patch").debuggable(BuildConfig.DEBUG).version(BuildConfig.VERSION_CODE)
-    }
-    private val logger = object : ILog.Stub() { override fun line(s: String) = log(s) }
     private val onBinder = Shizuku.OnBinderReceivedListener { runOnUiThread { refreshStatus() } }
     private val onPermission = Shizuku.OnRequestPermissionResultListener { _, _ -> runOnUiThread { refreshStatus() } }
 
@@ -53,10 +35,12 @@ class MainActivity : Activity() {
         status = TextView(this).apply { setPadding(0, pad / 2, 0, pad / 2) }
         root.addView(status)
         button(root, "Panduan pemakaian") { showGuide() }
-        button(root, "Pasang terjemahan") { withService(::install) }
-        button(root, "Kembalikan ke bahasa Inggris") { withService(::restore) }
-        button(root, "Cek status") { withService(::check) }
-        button(root, "Ambil data terbaru dari GitHub") { background { fetchGithub(); log("Data GitHub: versi ${versionOf(githubDir())}") } }
+        button(root, "Pasang terjemahan") { withShizuku("Memasang terjemahan", ::install) }
+        button(root, "Kembalikan ke bahasa Inggris") { withShizuku("Mengembalikan ke bahasa Inggris", ::restore) }
+        button(root, "Cek status") { withShizuku("Cek status", ::check) }
+        button(root, "Ambil data terbaru dari GitHub") {
+            background("Mengambil data dari GitHub") { fetchGithub(); log("Data GitHub: versi ${versionOf(githubDir())}") }
+        }
         logView = TextView(this).apply { typeface = Typeface.MONOSPACE; textSize = 12f; setTextIsSelectable(true) }
         logScroll = ScrollView(this).apply { addView(logView) }
         root.addView(logScroll, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f).apply { topMargin = pad / 2 })
@@ -72,7 +56,6 @@ class MainActivity : Activity() {
     override fun onDestroy() {
         Shizuku.removeBinderReceivedListener(onBinder)
         Shizuku.removeRequestPermissionResultListener(onPermission)
-        if (svc != null) runCatching { Shizuku.unbindUserService(args, conn, true) }
         super.onDestroy()
     }
 
@@ -96,51 +79,58 @@ class MainActivity : Activity() {
         status.setTextColor(if (p == null) 0xFF4CAF50.toInt() else 0xFFFF9800.toInt())
     }
 
-    private fun withService(job: (IPatchService) -> Unit) {
-        val p = shizukuProblem()
-        if (p != null) {
-            refreshStatus()
-            if (Shizuku.pingBinder() && !Shizuku.isPreV11() && Shizuku.checkSelfPermission() != PackageManager.PERMISSION_GRANTED) {
-                log("Izinkan aplikasi ini di dialog Shizuku, lalu tekan tombolnya lagi.")
-                Shizuku.requestPermission(1)
-            } else log(p)
-            return
-        }
-        if (svc == null) { connected = CountDownLatch(1); Shizuku.bindUserService(args, conn) }
-        val latch = connected
-        background {
-            val s = svc ?: run { latch.await(30, TimeUnit.SECONDS); svc } ?: error("Gagal menyambung ke Shizuku. Coba Stop lalu Start lagi di aplikasi Shizuku.")
-            job(s)
-        }
+    private fun withShizuku(title: String, job: () -> Unit) {
+        val p = shizukuProblem() ?: return background(title, job)
+        refreshStatus()
+        if (Shizuku.pingBinder() && !Shizuku.isPreV11() && Shizuku.checkSelfPermission() != PackageManager.PERMISSION_GRANTED) {
+            log("Izinkan aplikasi ini di dialog Shizuku, lalu tekan tombolnya lagi.")
+            Shizuku.requestPermission(1)
+        } else log(p)
     }
 
-    private fun call(s: IPatchService, cmd: String, dataDir: String = ""): String =
-        s.run(cmd, dataDir, logger).also { if (it.startsWith("!")) error(it.drop(1)) }
+    /** Runs Cli as app_process through Shizuku (shell uid), streaming its log; returns its "=" result line. */
+    private fun call(cmd: String, dataDir: String = ""): String {
+        val script = "cp=\"\$1\"; shift; CLASSPATH=\"\$cp\" exec /system/bin/app_process /system/bin ${Cli::class.java.name} \"\$@\""
+        val argv = arrayOf("sh", "-c", script, "sh", applicationInfo.sourceDir, applicationInfo.nativeLibraryDir, cmd, dataDir)
+        val p = NEW_PROCESS.invoke(null, argv, null, null) as Process
+        val stderr = StringBuffer()
+        val errThread = thread { p.errorStream.bufferedReader().forEachLine { stderr.append(it).append('\n') } }
+        var result: String? = null; var err: String? = null
+        p.inputStream.bufferedReader().forEachLine {
+            when {
+                it.startsWith("=") -> result = it.drop(1)
+                it.startsWith("!") -> err = it.drop(1)
+                else -> log(it)
+            }
+        }
+        val code = p.waitFor(); errThread.join()
+        err?.let { error(it) }
+        return result ?: error("Proses patch berhenti (kode $code).\n$stderr".trim())
+    }
 
     // --- actions (background thread) -------------------------------------------
-    private fun install(s: IPatchService) {
-        val game = gameVersion(s)
+    private fun install() {
+        val game = gameVersion()
         val data = dataFor(game, download = true)!!
         log("Memasang terjemahan (data versi ${versionOf(data)}). Tunggu 1-3 menit, jangan tutup aplikasi...")
-        call(s, "apply", data.path)
+        call("apply", data.path)
         log("\nSELESAI. Silakan buka game.")
     }
 
-    private fun restore(s: IPatchService) {
-        log("Mengembalikan berkas asli...")
-        call(s, "restore")
+    private fun restore() {
+        call("restore")
         log("\nSELESAI. Game kembali ke bahasa Inggris.")
     }
 
-    private fun check(s: IPatchService) {
-        val game = call(s, "version")
+    private fun check() {
+        val game = call("version")
         log("Data bawaan aplikasi: versi ${versionOf(bundledDir())}")
         log("Data dari GitHub    : versi ${versionOf(githubDir()) ?: "(belum diunduh)"}")
         if (game.isEmpty()) { log("Folder game tidak ditemukan di HP. Jalankan game sekali dulu."); return }
-        call(s, "check", dataFor(game, download = false)?.path ?: "")
+        call("check", dataFor(game, download = false)?.path ?: "")
     }
 
-    private fun gameVersion(s: IPatchService) = call(s, "version").ifEmpty {
+    private fun gameVersion() = call("version").ifEmpty {
         error("Folder game tidak ditemukan. Jalankan game sekali sampai selesai mengunduh data, tutup, lalu coba lagi.")
     }.also { log("Versi game di HP: $it") }
 
@@ -185,9 +175,10 @@ class MainActivity : Activity() {
     }
 
     // --- ui helpers ---------------------------------------------------------------
-    private fun background(job: () -> Unit) {
+    private fun background(title: String, job: () -> Unit) {
         if (busy) return
         busy = true; buttons.forEach { it.isEnabled = false }; logView.text = ""
+        log("$title... (tombol dikunci sampai selesai)")
         thread {
             try { job() } catch (e: Throwable) { log("\nGAGAL: ${e.message ?: e}") }
             finally { runOnUiThread { busy = false; buttons.forEach { it.isEnabled = true }; refreshStatus() } }
@@ -210,6 +201,9 @@ class MainActivity : Activity() {
         private const val REPO = "cloudmail91-dev/czn-patch-indonesia"     // same repo as update.bat
         private const val RAW = "https://raw.githubusercontent.com/$REPO/main/data"
         private val DATA_FILES = listOf("version.json", "story_files.json", "cache.dat")
+        // shortcut: Shizuku.newProcess is private since API 13 (UserService is the official way, but it crashes on HyperOS); reflection until that changes
+        private val NEW_PROCESS = Shizuku::class.java.getDeclaredMethod(
+            "newProcess", Array<String>::class.java, Array<String>::class.java, String::class.java).apply { isAccessible = true }
 
         private val GUIDE = """
 PERSIAPAN (sekali saja)

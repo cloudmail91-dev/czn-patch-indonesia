@@ -15,7 +15,9 @@ android {
         versionCode = 1
         versionName = "1.0"
     }
-    buildFeatures { aidl = true; buildConfig = true }
+    buildFeatures { buildConfig = true }
+    // extracted .so files, so the app_process run through Shizuku can System.load() zstd-jni by path
+    packaging { jniLibs { useLegacyPackaging = true } }
     // the translation data ships from the release's data/ folder, so a rebuild always bundles the latest
     sourceSets["main"].assets.srcDir("../../data")
     androidResources { ignoreAssetsPatterns += listOf("sets.dat", "glossary.txt", "*.bak", "cache.sebelum-update-*") }
