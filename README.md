@@ -10,7 +10,7 @@ bahasa Indonesia. Bisa dipakai di **PC** dan **Android**.
 
 - **Pakai dengan risiko sendiri.** Patch ini hanya mengganti berkas teks game (tidak menyentuh anti-cheat),
   tapi tetap memodifikasi berkas game. Pembuat patch tidak bertanggung jawab atas banned atau kerusakan.
-- **Versi game yang didukung: 1.0.84102.** Kalau game sudah update ke versi lain, lihat
+- **Versi game yang didukung: 1.0.84103.** Kalau game sudah update ke versi lain, lihat
   [Setelah game update](#setelah-game-update).
 - Sebagian kecil teks memang tetap bahasa Inggris (misalnya layar "TAP TO START").
 
@@ -109,7 +109,7 @@ Kirim perbaikanmu lewat Issues atau Pull Request di GitHub.
 
 ## English
 
-Unofficial Indonesian translation patch for **Chaos Zero Nightmare** (PC and Android, game version 1.0.84102).
+Unofficial Indonesian translation patch for **Chaos Zero Nightmare** (PC and Android, game version 1.0.84103).
 Machine-translated and unreviewed. Modifies game resource files only (no anti-cheat bypass), but use at your own risk.
 
 - **PC:** extract `CZN_Patch_PC.zip`, run `CZN_Patch.exe`, choose `1`, select the game folder (the one containing `bin`).
