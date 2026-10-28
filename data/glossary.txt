@@ -5,7 +5,7 @@
 Shield, Draw, Draw Pile, Discard, Discard Pile, Graveyard, Exhaust, Heal, Fixed Heal, Counterattack, Vulnerable, Agony, Fracture, Weaken, Impair, Morale, Resolve, Fortitude, Extra Attack, Coordinated Attack, Fixed Damage, Fixed Shield, Defense-Based Damage, Tenacity Damage, Damage Reduction, AP, DoT, Retain, Haste, Reload, Bullet, Mark, Linked, Scorched, Ravage, Voracity, Quietus, Resonance, Creation, Epiphany, Proc, Activate, Basic Card, Rhythm card = (keep)
 
 ## Proper nouns: keep English
-Chaos, Chaos Order, Nightmare, SS Nightmare, Invader, Void, Protos, Dark Star, Ark, Ark City, Lumen, Luminus, Tenebria, Nihilum, Edenity, Terrascion, Aether, Messiah, Empire, Distortion, Nebula Distortion, Galactic Disaster, Prism Module, Memory Fragment, Memory Code, Trauma Code, Save Data, Codex, Upon Fate, all character names = (keep)
+Chaos, Chaos Order, Nightmare, SS Nightmare, Invader, Void, Protos, Dark Star, Ark, Ark City, Lumen, Luminus, Tenebria, Nihilum, Edenity, Terrascion, Aether, Messiah, Empire, Distortion, Nebula Distortion, Galactic Disaster, Prism Module, Memory Fragment, Memory Code, Trauma Code, Save Data, Codex, Upon Fate, Apostle, all character names = (keep)
 
 ## Fixed translations
 Combatant / Combatants = Combatant (keep, do not translate as pejuang/petarung)
